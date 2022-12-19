@@ -9,6 +9,9 @@
     "type": "library",
     "minimum-stability": "dev",
     "autoload": {
+        "files": [
+            "src/riyu/Helpers/Events/Helper.php"
+        ],
         "psr-4": {
             "Riyu\\": "src/riyu"
         }
