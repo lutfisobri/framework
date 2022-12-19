@@ -1,0 +1,23 @@
+{
+    "name": "riyu/framework",
+    "description": "Riyu Framework",
+    "keywords": [
+        "framework",
+        "riyu"
+    ],
+    "license": "MIT",
+    "type": "library",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Riyu\\": "src/riyu"
+        }
+    },
+    "authors": [
+        {
+            "name": "kateruriyu",
+            "email": "kateruriyu@gmail.com"
+        }
+    ],
+    "require": {}
+}
