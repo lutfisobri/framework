@@ -83,7 +83,6 @@ abstract class Model
         $config = [
             'table' => $this->table,
             'fillable' => $this->fillable,
-            'prefix' => $this->prefix,
             'timestamp' => $this->timestamp,
             'primaryKey' => $this->primaryKey,
             'created_at' => self::CREATED_AT,

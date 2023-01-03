@@ -1,4 +1,5 @@
 <?php
+
 namespace Riyu\Http;
 
 use Riyu\App\Config;
@@ -70,21 +71,87 @@ class Request extends Foundation
             foreach ($value as $key => $val) {
                 $this->$key = $val;
             }
-        } else {    
-            static::$storage[] = $value;
+        } else {
             $this->request = $value;
         }
     }
 
     public static function getRoute()
     {
+        $script_name = self::scriptName();
+        $request_uri = self::getUri();
+
+        if ($script_name == $request_uri) {
+            return self::match();
+        } else {
+            $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+            $url = explode('/', $url);
+            $url = array_filter($url);
+            $url = array_values($url);
+            $url = implode('/', $url);
+            return "/" . $url;
+        }
+    }
+
+    public static function match()
+    {
         $url = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
         $url = explode('/', $url);
         $url = array_filter($url);
         $url = array_values($url);
-        $url = array_slice($url, 1);
+        return self::matchAgain($url);
+    }
+
+    public static function matchAgain($url)
+    {
+        $script_name = self::scriptName();
+        $script_name = explode('/', $script_name);
+        $script_name = array_filter($script_name);
+        $script_name = array_values($script_name);
+        $url = array_diff($url, $script_name);
         $url = implode('/', $url);
         return "/" . $url;
+    }
+
+    public static function getUri()
+    {
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $request_uri = explode('/', $request_uri);
+        $request_uri = array_filter($request_uri);
+        $request_uri = array_values($request_uri);
+        if (isset($request_uri[0])) {
+            $request_uri = $request_uri[0];
+        }
+        if (is_array($request_uri)) {
+            $request_uri = implode('/', $request_uri);
+        } else {
+            $request_uri = "/" . $request_uri;
+        }
+        $request_uri = $request_uri . "/";
+        return $request_uri;
+    }
+
+    public static function scriptName()
+    {
+        $script_name = $_SERVER['SCRIPT_NAME'];
+        $script_name = explode('/', $script_name);
+        $script_name = array_filter($script_name);
+        $script_name = array_values($script_name);
+        $script_name = implode('/', $script_name);
+        $script_name = "/" . $script_name;
+        $script_name = str_replace('index.php', '', $script_name);
+        return $script_name;
+    }
+
+    public static function header($arguments)
+    {
+        $arguments = strtoupper($arguments);
+        return $_SERVER['HTTP_'. $arguments];
+    }
+    
+    public function getHeaders()
+    {
+        return $_SERVER;
     }
 
     public function __debugInfo()
@@ -137,7 +204,7 @@ class Request extends Foundation
         if (isset($_FILES)) {
             $request = array_merge($request, $_FILES);
         }
-        
+
         $request = array_merge($request, self::$storage);
 
         return $request;
@@ -156,6 +223,35 @@ class Request extends Foundation
 
     public function __get($name)
     {
-        return $this->$name;
+        if ($this->has($name)) {
+            return $this->get($name);
+        }
+        
+        return null;
+    }
+
+    public static function create($request = null)
+    {
+        $instance = new static;
+        if (is_null($request)) {
+            $instance;
+        }
+
+        if (is_callable($request)) {
+            $request();
+        }
+
+        if (is_string($request)) {
+            $instance->set($request);
+        }
+
+        $request = is_array($request) ? $request : func_get_args();
+        $instance->set($request);
+        return $instance;
+    }
+
+    public function getAttributes()
+    {
+        return get_object_vars($this);
     }
 }

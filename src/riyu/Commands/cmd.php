@@ -42,6 +42,9 @@ class cmd
                 case in_array($command[1], $this->db):
                     $this->database($command);
                     break;
+                case 'serve':
+                    $this->serve();
+                    break;
                 default:
                     $this->run($command);
                     break;
@@ -133,5 +136,11 @@ class cmd
         $params = $commands[2] ?? '';
         $class = 'Riyu\Commands\Helpers\Help';
         return $class = new $class($params);
+    }
+
+    public function serve()
+    {
+        $class = 'Riyu\Commands\Helpers\Serve';
+        return $class = new $class;
     }
 }

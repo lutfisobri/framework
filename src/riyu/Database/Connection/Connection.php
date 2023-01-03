@@ -2,10 +2,6 @@
 
 namespace Riyu\Database\Connection;
 
-use PDO;
-use PDOException;
-use Riyu\Helpers\Errors\AppException;
-use Riyu\Helpers\Errors\Message;
 use Riyu\Helpers\Storage\GlobalStorage;
 
 class Connection
@@ -22,7 +18,7 @@ class Connection
      * 
      */
     private $pdoc = [
-        'driver', 'host', 'username', 'password', 'dbname', 'charset', 'port'
+        'driver', 'host', 'username', 'password', 'database', 'charset', 'port'
     ];
 
     /**
@@ -39,8 +35,6 @@ class Connection
                 $data[] = $config[$value];
             }
         }
-        Storage::setConfig($data);
-        GlobalStorage::set('db_config', $data);
         GlobalStorage::set('db', $config);
     }
 }

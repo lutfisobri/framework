@@ -3,6 +3,8 @@
 namespace Riyu\Helpers\Errors;
 
 use Exception;
+use Riyu\App\Config;
+use Riyu\Helpers\Errors\Backtrace\Handler\Backtrace;
 use Throwable;
 
 class AppException extends Exception
@@ -20,10 +22,5 @@ class AppException extends Exception
     final public function code()
     {
         return $this->code;
-    }
-
-    final public function previous()
-    {
-        return $this->previous;
     }
 }

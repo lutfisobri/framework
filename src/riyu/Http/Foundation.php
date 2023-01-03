@@ -1,22 +1,22 @@
 <?php
 namespace Riyu\Http;
 
-use Riyu\Helpers\Errors\ViewError;
-
 abstract class Foundation
 {
     use Input;
 
     public static $storage = [];
 
+    protected $request;
+
     public function __construct()
     {
-        // $this->booting();
+        $this->booting();
     }
 
     public function booting()
     {
-        $this->get();
+        $this->getAll();
     }
 
     public function getGet()
@@ -98,7 +98,7 @@ abstract class Foundation
         }
     }
 
-    public function get()
+    public function getAll()
     {
         $this->getGet();
         $this->getPost();
@@ -143,15 +143,5 @@ abstract class Foundation
     public function __call($name, $arguments)
     {
         return $this->$name(...$arguments);
-    }
-
-    public static function type()
-    {
-        if (isset($_SERVER['REQUEST_URI'])) {
-            $url = strpos($_SERVER['REQUEST_URI'], 'api') !== false ? 'api' : 'web';
-            return $url;
-        } else {
-            ViewError::code(404);
-        }
     }
 }

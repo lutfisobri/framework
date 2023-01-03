@@ -24,6 +24,8 @@ class Blueprint
 
     public $parameters = [];
 
+    public $create;
+
     public function __construct($name)
     {
         $this->name = $name;

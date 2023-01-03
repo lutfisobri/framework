@@ -2,6 +2,8 @@
 
 namespace Riyu\Validation;
 
+use Riyu\Helpers\Errors\AppException;
+
 class Validation
 {
     use Validator;
@@ -32,7 +34,7 @@ class Validation
                         $errors[$field][] = $error;
                     }
                 } else {
-                    $errors[$field][] = "Rule $ruleName not found";
+                    throw new AppException("Rule $ruleName not found");
                 }
             }
         }
@@ -71,7 +73,7 @@ class Validation
                         }
                     }
                 } else {
-                    $errors[$field][] = "Rule $ruleName not found";
+                    throw new AppException("Rule $ruleName not found");
                 }
             }
         }
@@ -123,7 +125,10 @@ class Validation
     public static function replace($message, $field, $rule, $value)
     {
         $message = str_replace(':field', $field, $message);
-        $message = str_replace(":$rule", $value, $message);
+        try {
+            $message = str_replace(":$rule", $value, $message);
+        } catch (\Throwable $th) {
+        }
         return $message;
     }
 }

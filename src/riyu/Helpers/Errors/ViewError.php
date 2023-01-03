@@ -25,7 +25,14 @@ class ViewError extends GlobalStorage
             http_response_code($code);
             exit;
         }
-        require_once self::$path . '500.php';
+        self::notFound();
+    }
+
+    private function notFound()
+    {
+        $dir = __DIR__ . '/Handler/resources';
+        $path = $dir . '/500.php';
+        require_once $path;
         http_response_code(500);
         exit;
     }

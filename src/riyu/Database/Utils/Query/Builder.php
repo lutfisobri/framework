@@ -2,8 +2,6 @@
 namespace Riyu\Database\Utils\Query;
 
 use Closure;
-use Riyu\Database\Connection\Event;
-use Riyu\Database\Connection\Manager;
 use Riyu\Helpers\Errors\AppException;
 use Riyu\Helpers\Storage\GlobalStorage;
 
@@ -11,33 +9,107 @@ class Builder extends Grammar
 {
     use Query;
 
+    /**
+     * Query type
+     * 
+     * @var string
+     */
     protected $queryType = 'select';
 
+    /**
+     * Query bindings
+     * 
+     * @var array
+     */
     protected $bindings = [];
 
+    /**
+     * All Selects
+     * 
+     * @var array
+     */
     protected $selects;
 
+    /**
+     * All insert
+     * 
+     * @var array
+     */
     protected $insert = [];
 
+    /**
+     * All update
+     * 
+     * @var array
+     */
     protected $update = [];
 
+    /**
+     * Check if delete
+     * 
+     * @var bool
+     */
     protected $isDelete;
 
+    /**
+     * Join table
+     * 
+     * @var array
+     */
     protected $joins = [];
 
+    /**
+     * Where clause
+     * 
+     * @var array
+     */
     protected $where = [];
 
+    /**
+     * Group by clause
+     * 
+     * @var array
+     */
     protected $groups;
 
+    /**
+     * Order by clause
+     * 
+     * @var array
+     */
     protected $orders;
 
+    /**
+     * Having clause
+     * 
+     * @var array
+     */
     protected $having = [];
 
+    /**
+     * Limit clause
+     * 
+     * @var int
+     */
     protected $limit;
 
+    /**
+     * Offset clause
+     * 
+     * @var int
+     */
     protected $offset;
 
+    /**
+     * Query string to be executed
+     * 
+     * @var string
+     */
     protected $query;
+
+    protected $verbJoin = [
+        'INNER', 'LEFT', 'RIGHT', 'FULL'
+    ];
 
     protected $timestamp = [];
 
@@ -48,17 +120,21 @@ class Builder extends Grammar
         parent::__construct();
     }
 
+    /**
+     * Get the query string for debugging
+     * 
+     * @return string
+     */
     public function debug()
     {
         return $this->buildQuery();
     }
 
-    public function setTimestamp(array $column)
-    {
-        $this->timestamp = $column;
-        return $this;
-    }
-
+    /**
+     * Create a new record
+     * 
+     * @param array|string|args $data
+     */
     public function create($data)
     {
         $data = is_array($data) ? $data : func_get_args();
@@ -88,124 +164,52 @@ class Builder extends Grammar
     public function get()
     {
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->queryGet($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->queryGet($query, $this->bindings);
     }
 
     public function all()
     {
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->queryAll($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->queryAll($query, $this->bindings);
     }
 
     public function first()
     {
         $this->limit(1);
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
 
-        $connection = new Event();
-        $connection = $connection->connect();
+        $this->setStorage($query);
 
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->queryFirst($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->queryFirst($query, $this->bindings);
     }
 
     public function count()
     {
-        $this->select('COUNT(*) as count');
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->queryCount($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->queryCount($query, $this->bindings);
     }
 
     public function save()
     {
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->exec($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->exec($query, $this->bindings);
     }
 
     public function execInsert(array $attributes)
     {
         $this->insert($attributes);
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->exec($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->exec($query, $this->bindings);
     }
 
     public function paginate($page = 1, $limit = 10)
@@ -213,33 +217,37 @@ class Builder extends Grammar
         $this->limit($limit);
         $this->offset(($page - 1) * $limit);
         $query = $this->buildQuery();
-        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
-            return $this->bindings[$matches[1]];
-        }, $query);
-        GlobalStorage::set('last_query', $last);
+        $this->setStorage($query);
 
-        $connection = new Event();
-        $connection = $connection->connect();
-
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->queryAll($query, $this->bindings);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->queryAll($query, $this->bindings);
     }
 
+    protected function setStorage($query)
+    {
+        $last = preg_replace_callback('/:(\w+)/', function ($matches) {
+            if (isset($this->bindings[$matches[0]])) {
+                return $this->bindings[$matches[0]];
+            } else {
+                return $this->bindings[$matches[1]];
+            }
+        }, $query);
+        
+        GlobalStorage::set('last_query', $last);
+    }
 
     public function lastQuery()
     {
         return GlobalStorage::get('last_query');
     }
 
-    public function find($id, $column = 'id')
+    public function find($id, $column = null)
     {
+        if (is_null($column)) {
+            $this->where($id);
+            return $this->first();
+        }
+
         $this->where($column, $id);
-        $this->queryType = 'select';
         return $this->first();
     }
 
@@ -250,14 +258,17 @@ class Builder extends Grammar
             $callback = $tmp;
             $column = 'id';
         }
+
         $this->where($column, $id);
         $this->queryType = 'select';
         $result = $this->first();
+
         if (empty($result)) {
             if ($callback instanceof Closure) {
                 return $callback();
             }
         }
+
         return $result;
     }
 
@@ -271,15 +282,7 @@ class Builder extends Grammar
     {
         $query = "TRUNCATE TABLE {$this->table}";
         GlobalStorage::set('last_query', $query);
-        $connection = new Event();
-        $connection = $connection->connect();
 
-        $exec = new Manager($connection);
-
-        try {
-            return $exec->exec($query);
-        } catch (\Throwable $th) {
-            new AppException("Error Processing Request");
-        }
+        return $this->manager->exec($query);
     }
 }

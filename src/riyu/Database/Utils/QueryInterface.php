@@ -11,12 +11,12 @@ interface QueryInterface
     public function get();
     public function first();
     public function where($column, $operator = '', $value = '');
-    public function join($table, $column1, $column2, $operator = null,);
-    public function leftJoin($table, $column1, $column2, $operator = null,);
-    public function rightJoin($table, $column1, $column2, $operator = null,);
-    public function innerJoin($table, $column1, $column2, $operator = null,);
-    public function fullJoin($table, $column1, $column2, $operator = null,);
-    public function outerJoin($table, $column1, $column2, $operator = null,);
+    public function join($table, $column1, $column2, $operator = null);
+    public function leftJoin($table, $column1, $column2, $operator = null);
+    public function rightJoin($table, $column1, $column2, $operator = null);
+    public function innerJoin($table, $column1, $column2, $operator = null);
+    public function fullJoin($table, $column1, $column2, $operator = null);
+    public function outerJoin($table, $column1, $column2, $operator = null);
     public function orderBy($column, $order);
     public function groupBy($column);
     public function all();
