@@ -8,6 +8,11 @@ date_default_timezone_set(Config::get('app')['timezone']);
 
 setlocale(LC_ALL, Config::get('app')['locale']);
 
+/**
+ * Handle all request from client
+ * 
+ * @package Riyu\Http
+ */
 class Request extends Foundation
 {
     public static function uri()

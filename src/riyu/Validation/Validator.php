@@ -14,13 +14,15 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|bool
      */
     public static function required($value, $field, $options = null)
     {
         if (empty($value)) {
             return $field . ' is required';
         }
+
+        return false;
     }
 
     /**
@@ -28,13 +30,15 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|bool
      */
     public static function email($value, $field, $options = null)
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
             return $field . ' must be a valid email';
         }
+
+        return false;
     }
 
     /**
@@ -43,7 +47,7 @@ trait Validator
      * @param string $value
      * @param string $field
      * @param int $length
-     * @return string
+     * @return string|bool
      */
     public static function min($value, $field, $length)
     {
@@ -51,6 +55,8 @@ trait Validator
             self::$minLength = $length;
             return $field . ' must be at least ' . $length . ' characters';
         }
+
+        return false;
     }
 
     /**
@@ -59,7 +65,7 @@ trait Validator
      * @param string $value
      * @param string $field
      * @param int $length
-     * @return string
+     * @return string|bool
      */
     public static function max($value, $field, $length)
     {
@@ -67,6 +73,8 @@ trait Validator
             self::$maxLength = $length;
             return $field . ' must be at most ' . $length . ' characters';
         }
+
+        return false;
     }
 
     /**
@@ -75,13 +83,15 @@ trait Validator
      * @param string $value
      * @param string $field
      * @param string $options
-     * @return string
+     * @return string|bool
      */
     public static function password($value, $field, $options = null)
     {
         if (!preg_match('/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$/', $value)) {
             return $field . ' must contain at least one uppercase letter, one lowercase letter and one number';
         }
+
+        return false;
     }
 
     /**
@@ -90,7 +100,7 @@ trait Validator
      * @param string $value
      * @param string $field
      * @param object $model
-     * @return string
+     * @return string|bool
      */
     public static function unique($value, $field, object $model)
     {
@@ -100,6 +110,8 @@ trait Validator
         if ($result) {
             return $field . ' already exists';
         }
+
+        return false;
     }
 
     /**
@@ -107,7 +119,7 @@ trait Validator
      * 
      * @param mixed $value
      * @param string $field
-     * @return string
+     * @return string|bool
      */
     public static function confirmed($value, $field, $options = null)
     {
@@ -118,6 +130,8 @@ trait Validator
         if ($value != self::$data[$field]) {
             return $field . ' does not match';
         }
+
+        return false;
     }
 
     /**
@@ -125,13 +139,15 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|bool
      */
     public static function numeric($value, $field, $options = null)
     {
         if (!is_numeric($value)) {
             return $field . ' must be numeric';
         }
+
+        return false;
     }
 
     /**
@@ -141,13 +157,15 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|bool
      */
     public static function date($value, $field, $options = null)
     {
         if (!preg_match('/^\d{4}-\d{2}-\d{2}$/', $value)) {
             return $field . ' must be a valid date';
         }
+
+        return false;
     }
 
     /**
@@ -157,7 +175,7 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|void
      */
     public static function year($value, $field, $options = null)
     {
@@ -173,7 +191,7 @@ trait Validator
      *
      * @param string $value
      * @param string $field
-     * @return string
+     * @return string|void
      */
     public static function timestamp($value, $field, $options = null)
     {

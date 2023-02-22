@@ -2,7 +2,6 @@
 namespace Riyu\Database\Connection;
 
 use PDO;
-use PDOException;
 use Riyu\App\Config;
 use Riyu\Helpers\Errors\AppException;
 use Riyu\Helpers\Storage\GlobalStorage;
@@ -55,7 +54,7 @@ class Event
         } else if (GlobalStorage::has('database')) {
             $this->config = GlobalStorage::get('db');
         } else {
-            throw new AppException("Database config not found");
+            throw new AppException("Database config not found, please check your config file");
         }
     }
 
@@ -105,8 +104,11 @@ class Event
             $options = $this->config['options'];
         }
 
-        $this->connection = new PDO($this->dsn, $username, $password, $options);
-        return $this->connection;
+        try {
+            $this->connection = new PDO($this->dsn, $username, $password, $options);
+        } catch (\Throwable $th) {
+            throw new \ErrorException($th->getMessage(), $th->getCode(), 1, $th->getFile(), $th->getLine(), $th->getPrevious());
+        }
     }
 
     public function raw()
@@ -126,38 +128,46 @@ class Event
             $options = $this->config['options'];
         }
 
-        $connection = new PDO($dsn, $username, $password, $options);
+        try {
+            $connection = new PDO($dsn, $username, $password, $options);
+        } catch (\Throwable $th) {
+            throw new \ErrorException($th->getMessage(), $th->getCode(), 1, $th->getFile(), $th->getLine(), $th->getPrevious());
+        }
+
         return $connection;
     }
 
     private function validateConfig()
     {
+        $config = Config::get('path');
+        $config = $config . 'config.php';
+
         if (!isset($this->config['driver'])) {
-            throw new AppException("Driver not found");
+            throw new \ErrorException("Driver not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['host'])) {
-            throw new AppException("Host not found");
+            throw new \ErrorException("Host not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['port'])) {
-            throw new AppException("Port not found");
+            throw new \ErrorException("Port not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['charset'])) {
-            throw new AppException("Charset not found");
+            throw new \ErrorException("Charset not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['username'])) {
-            throw new AppException("Username not found");
+            throw new \ErrorException("Username not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['password'])) {
-            throw new AppException("Password not found");
+            throw new \ErrorException("Password not found in config file: $config", 1, 1, $config, 0, null);
         }
 
         if (!isset($this->config['database'])) {
-            throw new AppException("Database not found");
+            throw new \ErrorException("Database not found in config file: $config", 1, 1, $config, 0, null);
         }
     }
 }

@@ -26,9 +26,15 @@ class Matching extends Storage
         $routes = self::getRoutes();
         $url = $uri;
         $uri = $this->pregReplace($uri);
+        
         if ($method == "HEAD") {
             $method = "GET";
         }
+
+        if (empty($routes[$method])) {
+            return ViewError::code(404);
+        }
+
         foreach ($routes[$method] as $route) {
             if (preg_match($uri, $route)) {
                 return $this->callback($route, $method);

@@ -285,7 +285,6 @@ class $name extends Model
     return view('$uri');
 }); $name \n";
             }
-            return "Route::$method('$uri', $action); $name \n";
         }
 
         if (strpos($method, '/') !== false) {

@@ -292,11 +292,9 @@ class Grammar
         foreach ($join as $key => $value) {
             $sql .= $value['type'] . ' JOIN `' . $value['table'] . '` ON ' . $value['first'] . ' ' . $value['operator'] . ' ' . $value['second'] . ' ';
         }
-
         if (empty($join)) {
             return '';
         }
-
         return $sql . ' ';
     }
 
@@ -322,6 +320,7 @@ class Grammar
         }
         
         $query = '';
+        
         foreach ($where as $key => $value) {
             if ($key == 0) {
                 if (!is_array($value)) {
@@ -337,9 +336,12 @@ class Grammar
                 }
             }
         }
-        if ($query != '') {
-            return ' WHERE ' . $query;
+
+        if ($query == '') {
+            return '';
         }
+
+        return ' WHERE ' . $query;
     }
 
     /**
@@ -351,19 +353,15 @@ class Grammar
     {
         $group = $this->groups;
         $sql = '';
-
         if (empty($group) || count($group) == 0) {
             return '';
         }
-
         foreach ($group as $key => $value) {
             $sql .= $value . ' ';
         }
-
         if ($sql == '') {
             return '';
         }
-
         return 'GROUP BY ' . $sql . ' ';
     }
 
@@ -376,19 +374,15 @@ class Grammar
     {
         $having = $this->having;
         $sql = '';
-
         if (empty($having) || count($having) == 0) {
             return '';
         }
-
         foreach ($having as $key => $value) {
             $sql .= $value['type'] . ' ' . $value['column'] . ' ' . $value['operator'] . ' ' . $value['value'];
         }
-
         if ($sql == '') {
             return '';
         }
-
         return 'HAVING ' . $sql . ' ';
     }
 
@@ -401,19 +395,15 @@ class Grammar
     {
         $order = $this->orders;
         $sql = '';
-
         if (empty($order) || count($order) == 0) {
             return '';
         }
-
         foreach ($order as $key => $value) {
             $sql .= $value . ' ';
         }
-
         if ($sql == '') {
             return '';
         }
-
         return 'ORDER BY ' . $sql . ' ';
     }
 
@@ -425,11 +415,9 @@ class Grammar
     public function buildLimit()
     {
         $limit = $this->limit;
-
         if (empty($limit)) {
             return '';
         }
-
         return 'LIMIT ' . $limit . ' ';
     }
 
@@ -441,11 +429,9 @@ class Grammar
     public function buildOffset()
     {
         $offset = $this->offset;
-
         if (empty($offset)) {
             return '';
         }
-
         return 'OFFSET ' . $offset . ' ';
     }
 
@@ -457,11 +443,9 @@ class Grammar
     public function buildTable()
     {
         $table = $this->table;
-
         if (empty($table)) {
             return '';
         }
-
         return $table;
     }
 
@@ -488,7 +472,6 @@ class Grammar
             if (isset($this->timestamp['created_at'])) {
                 $query .= "`" . $this->timestamp['created_at'] . "`, ";
             }
-            
             if (isset($this->timestamp['updated_at'])) {
                 $query .= "`" . $this->timestamp['updated_at'] . "`, ";
             }

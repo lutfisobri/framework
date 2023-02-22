@@ -69,7 +69,8 @@ class cmd
             if ($params2 == '--all') {
                 $class = 'Riyu\Commands\Helpers\Create';
                 $class = new $class;
-                return $class->all($params1);
+                $class->all($params1);
+                return;
             }
         }
 

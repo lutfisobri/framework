@@ -11,12 +11,59 @@ abstract class Foundation
 
     public function __construct()
     {
+        $this->hiddenHeader();
+        // $this->setcookieRiyu();
         $this->booting();
     }
 
     public function booting()
     {
         $this->getAll();
+    }
+
+    public function setcookieRiyu()
+    {
+        if ($this->isRiyu()) {
+            $this->generateCookie();
+        }
+         else {
+            $cookie = $_COOKIE['Riyu'];
+            header('Set-Cookie: Riyu=' . $cookie);
+        }
+    }
+
+    public function isRiyu()
+    {
+        if (isset($_COOKIE['Riyu']) && !empty($_COOKIE['Riyu'])) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function hiddenHeader()
+    {
+        header_remove('Server');
+        header_remove('server');
+
+        header_remove('X-Powered-By');
+        header_remove('x-powered-by');
+
+        header_remove('Expires');
+        header_remove('expires');
+        
+        header_remove('Cache-Control');
+        header_remove('cache-control');
+
+        header('Cache-Control: no-cache, private');
+        header('X-Powered-By: Riyu Framework');
+    }
+
+    public function generateCookie()
+    {
+        $expires = date('Y-m-d H:i:s', strtotime('+7 dayss'));
+        $cookie = bin2hex(random_bytes(256));
+        header('Set-Cookie: Riyu=' . $cookie);
     }
 
     public function getGet()

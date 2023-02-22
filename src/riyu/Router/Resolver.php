@@ -20,13 +20,11 @@ class Resolver
     public static function resolveClass($class)
     {
         $aliases = self::aliases();
-
         if (!is_null($class) && is_string($class)) {
             if (array_key_exists($class, $aliases)) {
                 return $aliases[$class];
             }
         }
-
         return $class;
     }
 
@@ -40,26 +38,21 @@ class Resolver
     public static function resolveData($class, $method, $data)
     {
         $name = array();
-
         $object = self::getArgument($class, $method);
         foreach ($object as $key => $value) {
             $name[] = $value->name;
         }
-
         if (in_array('request', $name)) {
             $key = array_search('request', $name);
             $object[$key] = new Request;
             $object[$key]->set($data);
         }
-
         if (in_array('Riyu\Http\Request', $name)) {
             $key = array_search('Riyu\Http\Request', $name);
             $object[$key] = new Request;
             $object[$key]->set($data);
         }
-
         $params = array();
-
         foreach ($object as $key => $value) {
             if (isset($value->name) && $value->name != null) {
                 $params[] = $data[$value->name];
@@ -67,7 +60,6 @@ class Resolver
                 $params[] = $value;
             }
         }
-
         return $class->$method(...$params);
     }
 
@@ -81,13 +73,12 @@ class Resolver
     public static function resolveWithParams($class, $method, $params)
     {
         $args = self::resolveClass($params[0]->name);
-
         if (isset($args) && $args != null) {
             $args = new $args;
             return $class->$method($args);
+        } else {
+            return $class->$method(json_encode($params));
         }
-        
-        return $class->$method(json_encode($params));
     }
 
     public static function resolve($callback, $data = null)
@@ -96,28 +87,22 @@ class Resolver
             if ($data == null) {
                 return $callback();
             }
-
             $name = array();
             $class = self::resolveClosure($callback);
-
             foreach ($class as $key => $value) {
                 $name[] = $value;
             }
-
             if (in_array('request', $name)) {
                 $key = array_search('request', $name);
                 $class[$key] = new Request;
                 $class[$key]->set($data);
             }
-
             if (in_array('Riyu\Http\Request', $name)) {
                 $key = array_search('Riyu\Http\Request', $name);
                 $class[$key] = new Request;
                 $class[$key]->set($data);
             }
-
             $params = array();
-
             foreach ($class as $key => $value) {
                 if ($value instanceof Request) {
                     $params[] = $value;
@@ -125,7 +110,6 @@ class Resolver
                     $params[] = $data[$value];
                 }
             }
-
             return $callback(...$params);
         } else {
             $class = new ReflectionClass($callback);
@@ -137,11 +121,9 @@ class Resolver
     {
         $class = new ReflectionFunction($closure);
         $class = $class->getParameters();
-        
         foreach ($class as $key => $value) {
             $class[$key] = $value->name;
         }
-
         return $class;
     }
 

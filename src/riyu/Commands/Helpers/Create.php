@@ -8,7 +8,7 @@ class Create
     public function model($name)
     {
         if ($name) {
-            return (new Foundation)->model($name);
+            (new Foundation)->model($name);
         } else {
             echo "\n";
             echo (new Color)->red("Please provide a model name");
@@ -20,7 +20,7 @@ class Create
     public function controller($name)
     {
         if ($name) {
-            return (new Foundation)->controller($name);
+            (new Foundation)->controller($name);
         } else {
             echo "\n";
             echo (new Color)->red("Please provide a controller name");
@@ -32,7 +32,7 @@ class Create
     public function route($method, $uri, $action = null, $name = null)
     {
         if ($method && $uri) {
-            return (new Foundation)->route($method, $uri, $action, $name);
+            (new Foundation)->route($method, $uri, $action, $name);
         } else {
             echo "\n";
             echo (new Color)->red("Please provide a uri and action");
@@ -43,6 +43,6 @@ class Create
 
     public function all($name)
     {
-        return (new Foundation)->all($name);
+        (new Foundation)->all($name);
     }
 }

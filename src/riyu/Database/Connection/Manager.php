@@ -17,7 +17,8 @@ class Manager implements ConnectionManager
     /**
      * Set Connection for query
      * 
-     * @return this
+     * @param object $connection
+     * @return void
      */
     public function __construct($connection)
     {
@@ -60,7 +61,7 @@ class Manager implements ConnectionManager
         }
 
         $stmt->execute();
-        
+
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -111,7 +112,6 @@ class Manager implements ConnectionManager
         if (!is_null($options)) {
             $this->bindValue($stmt, $query, $options);
         }
-
         $stmt->execute();
 
         return $stmt->rowCount();
@@ -131,7 +131,6 @@ class Manager implements ConnectionManager
         if (!is_null($options)) {
             $this->bindValue($stmt, $query, $options);
         }
-
         $stmt->execute();
 
         return $stmt->rowCount();

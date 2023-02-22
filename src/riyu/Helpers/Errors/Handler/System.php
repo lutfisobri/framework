@@ -2,6 +2,7 @@
 namespace Riyu\Helpers\Errors\Handler;
 
 use Riyu\Helpers\Errors\Handler\Contract\System as ContractSystem;
+use Riyu\Helpers\Errors\ViewError;
 
 class System implements ContractSystem
 {
@@ -14,10 +15,8 @@ class System implements ContractSystem
         $this->isSafety = $safety;
         $this->isDebug = $debug;
         set_error_handler([$this, 'handle']);
-        if ($this->isDebug) {
-            set_exception_handler([$this, 'exception']);
-            register_shutdown_function([$this, 'shutdown']);
-        }
+        set_exception_handler([$this, 'exception']);
+        register_shutdown_function([$this, 'shutdown']);
     }
 
     public function handle($errno, $errstr, $errfile, $errline)
@@ -38,8 +37,13 @@ class System implements ContractSystem
 
     public function exception($exception)
     {
-        $this->unregister();
-        $this->render($exception);
+        http_response_code(500);
+        if ($this->isDebug) {
+            $this->unregister();
+            $this->render($exception);
+        } else {
+            ViewError::code(500);
+        }
     }
 
     public function render($exception)

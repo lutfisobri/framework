@@ -101,7 +101,6 @@ class Engine
      * @param string $view
      * @param array $data
      * @param array $mergeData
-     * @return void
      */
     public function render($view, $data = [], $mergeData = [])
     {
@@ -114,7 +113,7 @@ class Engine
     /**
      * Render view
      *
-     * @return void
+     * @return
      */
     public function renderView()
     {
@@ -124,7 +123,7 @@ class Engine
                 $content = file_get_contents($path);
                 return $this->inject($content);
             } catch (\Throwable $th) {
-                echo $th;
+                throw new AppException($th->getMessage());
             }
         } else {
             http_response_code(404);
@@ -153,7 +152,7 @@ class Engine
      * Inject php to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectPHP($content)
     {
@@ -167,7 +166,7 @@ class Engine
      * Inject yields to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectYields($content)
     {
@@ -185,7 +184,7 @@ class Engine
      * Inject section to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectSections($content)
     {
@@ -211,7 +210,7 @@ class Engine
      * Inject data to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectData($content)
     {
@@ -260,7 +259,7 @@ class Engine
      * Inject function to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectFunctions($content)
     {
@@ -278,7 +277,7 @@ class Engine
      * Inject include to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectIncludes($content)
     {
@@ -305,7 +304,7 @@ class Engine
      * Inject extends to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function injectExtends($content)
     {
@@ -332,7 +331,7 @@ class Engine
      * Inject all to view
      *
      * @param string $content
-     * @return void
+     * @return $content
      */
     public function inject($content)
     {

@@ -13,7 +13,7 @@ class Validation
      * 
      * @param array $data
      * @param array $rules
-     * @return array
+     * @return array|bool
      */
     public static function make(array $data, array $rules)
     {
@@ -47,7 +47,7 @@ class Validation
      * @param array $data
      * @param array $rules
      * @param array $messages
-     * @return array
+     * @return array|bool
      */
     public static function message(array $data, array $rules, array $messages)
     {
@@ -98,7 +98,7 @@ class Validation
      * Get first error
      * 
      * @param array $errors
-     * @return string
+     * @return string|null
      */
     public static function first($errors)
     {
@@ -113,7 +113,7 @@ class Validation
      * Get all errors
      * 
      * @param array $errors
-     * @return array
+     * @return array|null
      */
     public static function all($errors)
     {

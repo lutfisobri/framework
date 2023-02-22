@@ -115,8 +115,15 @@ class Builder extends Grammar
 
     protected $fillable = [];
 
-    public function __construct()
+    public function __construct($model = null)
     {
+        if ($model) {
+            $this->model = $model;
+            $this->table = $model->getTable();
+            $this->fillable = $model->getFillable();
+            $this->timestamp = $model->getTimestamp();
+        }
+
         parent::__construct();
     }
 
@@ -133,7 +140,7 @@ class Builder extends Grammar
     /**
      * Create a new record
      * 
-     * @param array|string|args $data
+     * @param array|string $data
      */
     public function create($data)
     {
@@ -231,7 +238,6 @@ class Builder extends Grammar
                 return $this->bindings[$matches[1]];
             }
         }, $query);
-        
         GlobalStorage::set('last_query', $last);
     }
 
@@ -258,17 +264,14 @@ class Builder extends Grammar
             $callback = $tmp;
             $column = 'id';
         }
-
         $this->where($column, $id);
         $this->queryType = 'select';
         $result = $this->first();
-
         if (empty($result)) {
             if ($callback instanceof Closure) {
                 return $callback();
             }
         }
-
         return $result;
     }
 

@@ -36,6 +36,7 @@ class Callback
             return Resolver::resolveData($class, $method, $data);
         }
 
+
         return Resolver::resolveMethod($class, $method);
     }
 

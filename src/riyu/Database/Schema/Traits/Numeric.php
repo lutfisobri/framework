@@ -74,46 +74,4 @@ trait Numeric
         $this->addColumn('boolean', $name);
         return $this;
     }
-
-    public function serial($name, $length = 11)
-    {
-        $this->addColumn('serial', $name, ['length' => $length]);
-        return $this;
-    }
-
-    public function bigSerial($name, $length = 20)
-    {
-        $this->addColumn('bigserial', $name, ['length' => $length]);
-        return $this;
-    }
-
-    public function mediumSerial($name, $length = 9)
-    {
-        $this->addColumn('mediumserial', $name, ['length' => $length]);
-        return $this;
-    }
-
-    public function smallSerial($name, $length = 6)
-    {
-        $this->addColumn('smallserial', $name, ['length' => $length]);
-        return $this;
-    }
-
-    public function tinySerial($name, $length = 4)
-    {
-        $this->addColumn('tinyserial', $name, ['length' => $length]);
-        return $this;
-    }
-
-    public function numeric($name, $length = 8, $decimals = 2)
-    {
-        $this->addColumn('numeric', $name, ['length' => $length, 'decimals' => $decimals]);
-        return $this;
-    }
-
-    public function money($name, $length = 8, $decimals = 2)
-    {
-        $this->addColumn('money', $name, ['length' => $length, 'decimals' => $decimals]);
-        return $this;
-    }
 }
